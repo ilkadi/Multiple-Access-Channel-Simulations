@@ -1,4 +1,4 @@
-# New-View-on-Adversarial-Queuing-on-MAC-
+# New-View-on-Adversarial-Queuing-on-MAC
 The code of the simulation for the paper "New View on Adversarial Queuing on MAC" by Elijah Hradovich, Marek Klonowski and Dariusz R. Kowalski, appeared in IEEE Communication Letters 2021
 
 The purpose of this code is to conduct simulations in the dry Multiple Access Channel model in adversarial environment.
