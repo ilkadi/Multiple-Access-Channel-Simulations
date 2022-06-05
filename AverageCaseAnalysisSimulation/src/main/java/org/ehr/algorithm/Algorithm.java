@@ -1,5 +1,6 @@
 package org.ehr.algorithm;
 
+import javax.swing.plaf.nimbus.State;
 import java.util.function.Function;
 
 import static org.ehr.algorithm.Backoff.WINDOW_SIZE_LIMIT;
@@ -9,6 +10,7 @@ public enum Algorithm {
     RRW(RoundRobinWithholding::new),
     SRR(SearchRoundRobin::new),
     ROUND_ROBIN(RoundRobin::new),
+    STATE_AWARE(StateAware::new),
     TWELVE_OC_ADAPTIVE(TwelveOClockAdaptive::new),
     TWELVE_OC_FS(TwelveOClockFS::new),
     EIGHT_LIGHT_IS(getInterleavedSelectors(8)),

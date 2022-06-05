@@ -2,13 +2,15 @@ package org.ehr.simulation;
 
 import org.ehr.stats.IExecutorStatExporter;
 
+import java.util.List;
+
 public class ExecutorBuilder {
     private int threads;
     private int repetitions;
     private int executionRounds;
     private int systemSize;
     private int startingQueues;
-    private double rhoStep;
+    private List<Double> rhoRange;
     private String algorithmName;
     private String adversaryName;
     private IExecutorStatExporter statRecorder;
@@ -38,8 +40,8 @@ public class ExecutorBuilder {
         return this;
     }
 
-    public ExecutorBuilder setRhoStep(double rhoStep) {
-        this.rhoStep = rhoStep;
+    public ExecutorBuilder setRhoRange(List<Double> rhoRange) {
+        this.rhoRange = rhoRange;
         return this;
     }
 
@@ -59,6 +61,6 @@ public class ExecutorBuilder {
     }
 
     public Executor createExecutor() {
-        return new Executor(repetitions, executionRounds, systemSize, rhoStep, algorithmName, adversaryName, threads, statRecorder, startingQueues);
+        return new Executor(repetitions, executionRounds, systemSize, rhoRange, algorithmName, adversaryName, threads, statRecorder, startingQueues);
     }
 }

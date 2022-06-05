@@ -1,12 +1,12 @@
 package org.ehr.stats;
 
-public class ExecutorStatsExtractor {
+public class ExecutorRhoStatsExtractor {
     private final ExecutorRhoStats executorRhoStats;
     private final double repetitions;
     private final int executionRounds;
     private final int systemSize;
 
-    public ExecutorStatsExtractor(double rho, double repetitions, int executionRounds, int systemSize) {
+    public ExecutorRhoStatsExtractor(double rho, double repetitions, int executionRounds, int systemSize) {
         this.repetitions = repetitions;
         this.executionRounds = executionRounds;
         this.systemSize = systemSize;
@@ -58,5 +58,13 @@ public class ExecutorStatsExtractor {
 
     synchronized public ExecutorRhoStats getExecutorStats() {
         return executorRhoStats;
+    }
+
+    synchronized public ExecutionLastStats getExecutionLastStats() {
+        int last = executorRhoStats.getMaxMax().length - 1;
+        return new ExecutionLastStats(executorRhoStats.getRho(),
+                executorRhoStats.getMaxMax()[last], executorRhoStats.getAvgMax()[last],
+                executorRhoStats.getMaxAvg()[last], executorRhoStats.getAvgAvg()[last],
+                executorRhoStats.getMaxEnergy()[last], executorRhoStats.getAvgEnergy()[last]);
     }
 }

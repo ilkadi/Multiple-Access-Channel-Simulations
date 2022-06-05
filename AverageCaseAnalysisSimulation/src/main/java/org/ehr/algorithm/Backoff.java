@@ -35,7 +35,8 @@ public class Backoff implements IAlgorithm {
     @Override
     public void processCollision() {
         for (Integer stationId : roundTransmissionIds) {
-            windowByStation[stationId] += 1;
+            if (backoffFunction.apply(windowByStation[stationId]) < WINDOW_SIZE_LIMIT)
+                windowByStation[stationId] += 1;
             countdownByStation[stationId] = r.nextInt(backoffFunction.apply(windowByStation[stationId]));
         }
         roundTransmissionIds.clear();

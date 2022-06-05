@@ -8,7 +8,10 @@ import org.ehr.stats.IExecutorStatExporter;
 import org.ehr.stats.CsvExecutorStatExporter;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Main {
     public static void main(String[] args) {
@@ -26,11 +29,15 @@ public class Main {
                     properties.getProperty("systemSize", "32"));
             int startingQueues = Integer.parseInt(
                     properties.getProperty("startingQueues", "0"));
-            double rhoStep = Double.parseDouble(
-                    properties.getProperty("rhoStep", "0.1"));
+            int rhoSantiMax = Integer.parseInt(
+                    properties.getProperty("rhoSantiMax", "100"));
             String algorithmName = properties.getProperty("algorithm", Algorithm.MBTF.name());
             String adversaryName = properties.getProperty("adversary", Adversary.STOCHASTIC_P05_B256.name());
 
+            List<Double> rhoRange = IntStream.range(1, rhoSantiMax + 1)
+                    .asDoubleStream()
+                    .map(v -> 0.01 * v)
+                    .boxed().collect(Collectors.toList());
             IExecutorStatExporter statRecorder = new CsvExecutorStatExporter();
             Executor executor = new ExecutorBuilder()
                     .setRepetitions(repetitions)
@@ -40,7 +47,7 @@ public class Main {
                     .setAlgorithmName(algorithmName)
                     .setExecutionRounds(executionRounds)
                     .setSystemSize(systemSize)
-                    .setRhoStep(rhoStep)
+                    .setRhoRange(rhoRange)
                     .setExecutorStatExporter(statRecorder)
                     .createExecutor();
 

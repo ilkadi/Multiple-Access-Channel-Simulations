@@ -3,13 +3,15 @@ package org.ehr.stats;
 import java.io.*;
 import java.util.Arrays;
 
+import static org.ehr.utils.FileHelper.mkdirsForOutput;
+
 public class CsvExecutorStatExporter implements IExecutorStatExporter {
     public static final String OUTPUT_DIR = "output";
 
     @Override
     public void publishSummaryExecutionResultsForRho(String rhoString,
                                                      String outputName, ExecutorRhoStats executorRhoStats) {
-        String filePath = OUTPUT_DIR + "/" + rhoString + "/" + outputName;
+        String filePath = OUTPUT_DIR + "/by_rho/" + rhoString + "/" + outputName;
         System.out.println("Saving: " + filePath);
         mkdirsForOutput(filePath);
 
@@ -33,20 +35,5 @@ public class CsvExecutorStatExporter implements IExecutorStatExporter {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    @Override
-    public void publishSummaryExecutionResults(String outputName, ExecutorRhoStats executorRhoStats) {
-
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private void mkdirsForOutput(String path) {
-        String[] pathSegments = path.split("/");
-        String pathWithoutLastSegment = String.join("/",
-                Arrays.copyOf(pathSegments, pathSegments.length - 1));
-
-        File outputDir = new File(pathWithoutLastSegment);
-        outputDir.mkdirs();
     }
 }

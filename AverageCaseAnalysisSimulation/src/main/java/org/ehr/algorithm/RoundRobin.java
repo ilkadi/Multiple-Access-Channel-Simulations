@@ -14,6 +14,6 @@ public class RoundRobin implements IAlgorithm {
 
     @Override
     public boolean awakeInRound(int round, int id) {
-        return true;
+        return round % systemSize == id;
     }
 }

@@ -65,12 +65,13 @@ public class TwelveOClockAdaptive implements IAlgorithm {
 
     @Override
     public boolean awakeInRound(int round, int id) {
-        return false;
-    }
-
-    @Override
-    public void processSilence() {
-        IAlgorithm.super.processSilence();
+        boolean transmitStationAwake = AlgorithmState.NORMAL.equals(algorithmState) &&
+                orderList.get(round % systemSize) == id;
+        boolean bigStationAwake = (AlgorithmState.BIG.equals(algorithmState) ||
+                AlgorithmState.LAST_BIG.equals(algorithmState)) &&
+                orderList.get(tokenWitholdIndex) == id;
+        boolean listenStationAwake = orderList.get((round + 1) % systemSize) == id;
+        return transmitStationAwake || bigStationAwake || listenStationAwake;
     }
 
     enum AlgorithmState {
