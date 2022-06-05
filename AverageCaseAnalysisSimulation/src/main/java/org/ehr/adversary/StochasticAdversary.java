@@ -1,54 +1,49 @@
 package org.ehr.adversary;
 
-import org.ehr.channel.IAdversary;
 import org.ehr.channel.Station;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class StochasticAdversary implements IAdversary {
+    private final double pGate;
     private final double rho;
     private final int systemSize;
-    private static final int beta = 1;
+    private final int beta;
     private double accumulatedTransmitPower;
     private final Random r;
+    private final int[] roundTargets;
 
-    public StochasticAdversary(double rho, int systemSize) {
+    public StochasticAdversary(double rho, int systemSize, double pGate, int beta) {
+        this.pGate = pGate;
+        this.beta = beta;
         this.rho = rho;
         this.systemSize = systemSize;
+        this.roundTargets = new int[systemSize];
 
         accumulatedTransmitPower = 0.0;
         r = new Random();
     }
 
     @Override
-    public void tickRound() {
+    public void prepareForRound(List<Station> stations) {
+        Arrays.fill(roundTargets, 0);
         accumulatedTransmitPower += rho;
-    }
 
-    @Override
-    public Map<Integer, Integer> getTargetStationIds(int round, List<Station> stations) {
-        return Map.of(r.nextInt(systemSize), 1);
-    }
-
-    @Override
-    public int injectedPackets() {
-        if (accumulatedTransmitPower >= beta) {
-            accumulatedTransmitPower -= beta;
-            return beta;
+        if (injectThisRound()) {
+            int burstSize = (int) Math.floor(accumulatedTransmitPower);
+            accumulatedTransmitPower -= Math.floor(burstSize);
+            for (int i = 0; i < burstSize; i++)
+                roundTargets[r.nextInt(systemSize)] += 1;
         }
 
-        return 0;
     }
 
     @Override
-    public void processCollision() {
-
+    public int getInjectedPacketsByStation(int round, int stationId) {
+        return roundTargets[stationId];
     }
 
-    @Override
-    public void processSilentRound() {
-
+    private boolean injectThisRound() {
+        return accumulatedTransmitPower >= beta || r.nextDouble() <= pGate;
     }
 }

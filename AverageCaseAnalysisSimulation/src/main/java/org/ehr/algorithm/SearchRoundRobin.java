@@ -1,7 +1,5 @@
 package org.ehr.algorithm;
 
-import org.ehr.channel.IAlgorithm;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -19,14 +17,9 @@ public class SearchRoundRobin implements IAlgorithm {
             allStations.add(i);
 
         executionStack = new Stack<>();
-        searchGroup  = new ArrayList<>();
-        nextTransmitRound = 0;
-    }
-
-    @Override
-    public void reset() {
-        executionStack.clear();
         executionStack.push(allStations);
+
+        searchGroup  = new ArrayList<>();
         nextTransmitRound = 0;
     }
 
@@ -41,7 +34,7 @@ public class SearchRoundRobin implements IAlgorithm {
     }
 
     @Override
-    public void processTransmission() {
+    public void processTransmission(int transmittedId) {
         if(channelListeningProcessed)
             return;
 
@@ -66,5 +59,10 @@ public class SearchRoundRobin implements IAlgorithm {
         executionStack.push(searchGroup.subList(0, groupSearchDivisionPoint));
         executionStack.push(searchGroup.subList(groupSearchDivisionPoint, searchGroup.size()));
         channelListeningProcessed = true;
+    }
+
+    @Override
+    public boolean awakeInRound(int round, int id) {
+        return true;
     }
 }
