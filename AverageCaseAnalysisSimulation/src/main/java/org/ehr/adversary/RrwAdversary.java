@@ -1,10 +1,8 @@
 package org.ehr.adversary;
 
-import org.ehr.channel.IAdversary;
-import org.ehr.channel.Station;
+import org.ehr.channel.IStation;
 
 import java.util.List;
-import java.util.Map;
 
 public class RrwAdversary implements IAdversary {
     private final double rho;
@@ -21,32 +19,21 @@ public class RrwAdversary implements IAdversary {
     }
 
     @Override
-    public void processCollision() {
-
-    }
-
-    @Override
     public void processSilentRound() {
         targetStationId = (systemSize + targetStationId - 1) % systemSize;
     }
 
     @Override
-    public void tickRound() {
+    public void prepareForRound(List<IStation> stations) {
         accumulatedTransmitPower += rho;
     }
 
     @Override
-    public Map<Integer, Integer> getTargetStationIds(int round, List<Station> stations) {
-        return Map.of(targetStationId, 1);
-    }
-
-    @Override
-    public int injectedPackets() {
-        if(accumulatedTransmitPower >= 1.0) {
+    public int getInjectedPacketsByStation(int round, int stationId) {
+        if (stationId == targetStationId && accumulatedTransmitPower >= 1.0 ) {
             accumulatedTransmitPower -= 1.0;
             return 1;
         }
-
         return 0;
     }
 }

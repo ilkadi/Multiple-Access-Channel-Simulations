@@ -1,13 +1,12 @@
 package org.ehr.adversary;
 
-import org.ehr.channel.IAdversary;
-import org.ehr.channel.Station;
+import org.ehr.channel.IStation;
 
 import java.util.List;
 import java.util.Map;
 
 public class SrrAdversary implements IAdversary {
-    private static final int beta = 8;
+    private final int beta = 8;
     private final Map<Integer, Integer> strategyMap32 = Map.of(
             0, 1,
             1, 1,
@@ -23,43 +22,30 @@ public class SrrAdversary implements IAdversary {
     private final double rho;
     private double accumulatedTransmitPower;
     private final Map<Integer, Integer> strategyMap;
+    private boolean burstReady = false;
 
     public SrrAdversary(double rho, int systemSize) {
         this.rho = rho;
 
         if(systemSize == 32)
             strategyMap = strategyMap32;
-        else
+        else {
+            System.out.println("Using the map for SystemSize = 64");
             strategyMap = strategyMap64;
+        }
 
         accumulatedTransmitPower = 0.0;
     }
 
     @Override
-    public void processCollision() {
-    }
-
-    @Override
-    public void processSilentRound() {
-    }
-
-    @Override
-    public void tickRound() {
+    public void prepareForRound(List<IStation> stations) {
         accumulatedTransmitPower += rho;
+        burstReady = accumulatedTransmitPower >= beta;
+        accumulatedTransmitPower = burstReady ? accumulatedTransmitPower - beta : accumulatedTransmitPower;
     }
 
     @Override
-    public Map<Integer, Integer> getTargetStationIds(int round, List<Station> stations) {
-        return strategyMap;
-    }
-
-    @Override
-    public int injectedPackets() {
-        if (accumulatedTransmitPower >= beta) {
-            accumulatedTransmitPower -= beta;
-            return beta;
-        }
-
-        return 0;
+    public int getInjectedPacketsByStation(int round, int stationId) {
+        return burstReady && strategyMap.containsKey(stationId) ? strategyMap.get(stationId) : 0;
     }
 }

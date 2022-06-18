@@ -1,7 +1,5 @@
 package org.ehr.algorithm;
 
-import org.ehr.channel.IAlgorithm;
-
 import java.util.LinkedList;
 
 public class MoveBigToFront implements IAlgorithm {
@@ -12,12 +10,8 @@ public class MoveBigToFront implements IAlgorithm {
 
     public MoveBigToFront(int systemSize) {
         this.systemSize = systemSize;
-        orderList = new LinkedList<>();
-    }
+        this.orderList = new LinkedList<>();
 
-    @Override
-    public void reset() {
-        orderList.clear();
         for(int i = 0; i < systemSize; i++)
             orderList.add(i);
 
@@ -49,5 +43,10 @@ public class MoveBigToFront implements IAlgorithm {
         }
 
         return transmissionHappened;
+    }
+
+    @Override
+    public boolean awakeInRound(int round, int id) {
+        return true;
     }
 }
