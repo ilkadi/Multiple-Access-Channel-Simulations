@@ -1,6 +1,6 @@
 package org.ehr.adversary;
 
-import org.ehr.channel.Station;
+import org.ehr.channel.IStation;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class SrrAdversary implements IAdversary {
     }
 
     @Override
-    public void prepareForRound(List<Station> stations) {
+    public void prepareForRound(List<IStation> stations) {
         accumulatedTransmitPower += rho;
         burstReady = accumulatedTransmitPower >= beta;
         accumulatedTransmitPower = burstReady ? accumulatedTransmitPower - beta : accumulatedTransmitPower;
@@ -46,6 +46,6 @@ public class SrrAdversary implements IAdversary {
 
     @Override
     public int getInjectedPacketsByStation(int round, int stationId) {
-        return burstReady ? strategyMap.get(stationId) : 0;
+        return burstReady && strategyMap.containsKey(stationId) ? strategyMap.get(stationId) : 0;
     }
 }

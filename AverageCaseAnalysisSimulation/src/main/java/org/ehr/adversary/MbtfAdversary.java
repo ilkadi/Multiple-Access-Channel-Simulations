@@ -1,12 +1,14 @@
 package org.ehr.adversary;
 
-import org.ehr.channel.Station;
+import org.ehr.channel.IStation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MbtfAdversary implements IAdversary {
-    private final Set<Integer> targetSet;
-    private final Set<Integer> nonTargetList;
+    private final List<Integer> targetList;
+    private final List<Integer> nonTargetList;
     private final double rho;
     private double accumulatedTransmitPower;
     private final int maxAllowedPacketsPerTargetStation;
@@ -17,19 +19,19 @@ public class MbtfAdversary implements IAdversary {
         this.maxAllowedPacketsPerTargetStation = systemSize - 1;
         this.roundTargets = new int[systemSize];
 
-        targetSet = new HashSet<>();
-        nonTargetList = new HashSet<>();
+        targetList = new ArrayList<>();
+        nonTargetList = new ArrayList<>();
         int targetSize = (int) Math.floor(rho * maxAllowedPacketsPerTargetStation);
         int distance = (int) ((double) systemSize / (double) (targetSize)) - 1;
 
         int currentId = 1;
         for (int i = 1; i <= targetSize; i++) {
-            targetSet.add(currentId);
+            targetList.add(currentId);
             currentId += distance;
         }
 
         for (int i = 0; i < systemSize; i++) {
-            if (!targetSet.contains(i))
+            if (!targetList.contains(i))
                 nonTargetList.add(i);
         }
 
@@ -42,20 +44,21 @@ public class MbtfAdversary implements IAdversary {
     }
 
     @Override
-    public void prepareForRound(List<Station> stations) {
+    public void prepareForRound(List<IStation> stations) {
         accumulatedTransmitPower += rho;
         Arrays.fill(roundTargets, 0);
 
         if (accumulatedTransmitPower > 1.0) {
             int targetStationId = getTargetStationId(stations);
             roundTargets[targetStationId] = 1;
+            accumulatedTransmitPower -= 1.0;
         }
 
     }
 
-    private int getTargetStationId(List<Station> stations) {
+    private int getTargetStationId(List<IStation> stations) {
         int targetStationId = 0;
-        for (int targetId : targetSet) {
+        for (int targetId : targetList) {
             if (stations.get(targetId).getQueueSize() < maxAllowedPacketsPerTargetStation) {
                 return targetId;
             }

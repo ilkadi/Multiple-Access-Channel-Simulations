@@ -1,20 +1,18 @@
 package org.ehr.simulation;
 
-import org.ehr.channel.IChannel;
-import org.ehr.stats.ISimulationStats;
+import org.ehr.channel.Channel;
 
 public class Simulation {
     private final int executionRounds;
-    private final IChannel channel;
+    private final Channel channel;
 
-    Simulation(int executionRounds, IChannel channel) {
+    Simulation(int executionRounds, Channel channel) {
         this.executionRounds = executionRounds;
         this.channel = channel;
     }
 
-    public ISimulationStats run() {
+    public void run() {
         for (int round = 0; round < executionRounds; round++)
             channel.tickRound(round);
-        return channel.getSimulationStats();
     }
 }

@@ -1,6 +1,6 @@
 package org.ehr.adversary;
 
-import org.ehr.channel.Station;
+import org.ehr.channel.IStation;
 
 import java.util.*;
 
@@ -25,7 +25,7 @@ public class StochasticAdversary implements IAdversary {
     }
 
     @Override
-    public void prepareForRound(List<Station> stations) {
+    public void prepareForRound(List<IStation> stations) {
         Arrays.fill(roundTargets, 0);
         accumulatedTransmitPower += rho;
 

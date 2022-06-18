@@ -1,20 +1,18 @@
-package org.ehr.stats;
+package org.ehr.stats.queueEnergy;
 
-public class MinimalSimulationStats implements ISimulationStats {
+public class QueueEnergyStats {
     private final int[][] queueSizeByRoundAndStation;
     private final boolean[][] awakeByRoundAndStation;
 
-    public MinimalSimulationStats(int executionRounds, int systemSize) {
+    public QueueEnergyStats(int executionRounds, int systemSize) {
         queueSizeByRoundAndStation = new int[executionRounds][systemSize];
         awakeByRoundAndStation = new boolean[executionRounds][systemSize];
     }
 
-    @Override
     public int[][] getQueueSizeByRoundAndStation() {
         return queueSizeByRoundAndStation;
     }
 
-    @Override
     public boolean[][] awakeByRoundAndStation() {
         return awakeByRoundAndStation;
     }

@@ -2,14 +2,13 @@ package org.ehr.channel;
 
 import org.ehr.adversary.IAdversary;
 import org.ehr.algorithm.IAlgorithm;
-import org.ehr.stats.ISimulationStats;
 import org.ehr.stats.ISimulationsStatRecorder;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MinimalStatChannel implements IChannel {
-    private final List<Station> stations;
+public class Channel {
+    private final List<IStation> stations;
     private final IAlgorithm algorithm;
     private final IAdversary adversary;
     private final ISimulationsStatRecorder statRecorder;
@@ -19,8 +18,8 @@ public class MinimalStatChannel implements IChannel {
     private int lastTransmittedStation;
     private int transmissionsCount;
 
-    MinimalStatChannel(List<Station> stations, IAlgorithm algorithm,
-                       IAdversary adversary, ISimulationsStatRecorder statRecorder) {
+    Channel(List<IStation> stations, IAlgorithm algorithm,
+            IAdversary adversary, ISimulationsStatRecorder statRecorder) {
         this.stations = stations;
         this.adversary = adversary;
         this.statRecorder = statRecorder;
@@ -30,7 +29,6 @@ public class MinimalStatChannel implements IChannel {
         this.roundAwakeStations = new boolean[stations.size()];
     }
 
-    @Override
     public void tickRound(final int round) {
         resetRoundCounters();
 
@@ -39,20 +37,15 @@ public class MinimalStatChannel implements IChannel {
         processListeningStage(round);
 
         statRecorder.recordAwakeStations(round, roundAwakeStations);
-        statRecorder.recordQueueSize(round, stations);
-    }
-
-    @Override
-    public ISimulationStats getSimulationStats() {
-        return statRecorder.getSimulationStats();
+        statRecorder.recordStationsState(round, stations);
     }
 
     private void processInjectionStage(final int round) {
         adversary.prepareForRound(stations);
 
-        for (Station station : stations) {
+        for (IStation station : stations) {
             int packets = adversary.getInjectedPacketsByStation(round, station.getId());
-            station.injectPacket(packets);
+            station.injectPacket(packets, round);
         }
     }
 

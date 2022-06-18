@@ -2,10 +2,9 @@ package org.ehr;
 
 import org.ehr.adversary.Adversary;
 import org.ehr.algorithm.Algorithm;
-import org.ehr.simulation.Executor;
-import org.ehr.simulation.ExecutorBuilder;
-import org.ehr.stats.IExecutorStatExporter;
-import org.ehr.stats.CsvExecutorStatExporter;
+import org.ehr.simulation.ExecutionSettings;
+import org.ehr.simulation.SimulationType;
+import org.ehr.simulation.ExecutionSettingsBuilder;
 
 import java.io.InputStream;
 import java.util.List;
@@ -38,8 +37,7 @@ public class Main {
                     .asDoubleStream()
                     .map(v -> 0.01 * v)
                     .boxed().collect(Collectors.toList());
-            IExecutorStatExporter statRecorder = new CsvExecutorStatExporter();
-            Executor executor = new ExecutorBuilder()
+            ExecutionSettings executionSettings = new ExecutionSettingsBuilder()
                     .setRepetitions(repetitions)
                     .setStartingQueues(startingQueues)
                     .setThreads(runThreads)
@@ -48,10 +46,10 @@ public class Main {
                     .setExecutionRounds(executionRounds)
                     .setSystemSize(systemSize)
                     .setRhoRange(rhoRange)
-                    .setExecutorStatExporter(statRecorder)
-                    .createExecutor();
-
-            executor.runExperimentsForFullRhoRange();
+                    .createExecutionSettings();
+            SimulationType.QUEUE_ENERGY
+                    .getInstance(executionSettings)
+                    .runExperiments();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

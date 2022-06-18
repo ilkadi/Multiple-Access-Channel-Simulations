@@ -2,9 +2,9 @@ package org.ehr.jcss;
 
 import org.ehr.adversary.Adversary;
 import org.ehr.algorithm.Algorithm;
-import org.ehr.simulation.Executor;
-import org.ehr.simulation.ExecutorBuilder;
-import org.ehr.stats.CsvExecutorStatExporter;
+import org.ehr.simulation.ExecutionSettings;
+import org.ehr.simulation.ExecutionSettingsBuilder;
+import org.ehr.simulation.SimulationType;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -17,15 +17,14 @@ import java.util.stream.IntStream;
  * Please note that this implementation is not the same as the one used above.
  * Hence, there are some variations in the results.
  */
-public class PublishedSimulationsSetupTest {
+public class JCSSSimulationsSetupTest {
     private static final int DEFAULT_REPETITIONS = 128;
     private static final int ONE_MILLION = 1000000;
 
     @Test
     @Disabled
     public void simulation12Ofs_figure6() throws InterruptedException {
-        CsvExecutorStatExporter statExporter = new CsvExecutorStatExporter();
-        Executor executor = new ExecutorBuilder()
+        ExecutionSettings executionSettings = new ExecutionSettingsBuilder()
                 .setRepetitions(DEFAULT_REPETITIONS)
                 .setThreads(4)
                 .setStartingQueues(96)
@@ -34,9 +33,10 @@ public class PublishedSimulationsSetupTest {
                 .setExecutionRounds(ONE_MILLION)
                 .setSystemSize(32)
                 .setRhoRange(List.of(0.968))
-                .setExecutorStatExporter(statExporter)
-                .createExecutor();
-        executor.runExperimentsForFullRhoRange();
+                .createExecutionSettings();
+        SimulationType.QUEUE_ENERGY
+                .getInstance(executionSettings)
+                .runExperiments();
     }
 
     @Test
@@ -59,8 +59,7 @@ public class PublishedSimulationsSetupTest {
 
         for (Integer systemSize : systemSizes) {
             for (Algorithm algorithm : algorithms) {
-                CsvExecutorStatExporter statExporter = new CsvExecutorStatExporter();
-                Executor executor = new ExecutorBuilder()
+                ExecutionSettings executionSettings = new ExecutionSettingsBuilder()
                         .setRepetitions(DEFAULT_REPETITIONS)
                         .setThreads(4)
                         .setStartingQueues(0)
@@ -69,9 +68,10 @@ public class PublishedSimulationsSetupTest {
                         .setExecutionRounds(ONE_MILLION)
                         .setSystemSize(systemSize)
                         .setRhoRange(rhoRange)
-                        .setExecutorStatExporter(statExporter)
-                        .createExecutor();
-                executor.runExperimentsForFullRhoRange();
+                        .createExecutionSettings();
+                SimulationType.QUEUE_ENERGY
+                        .getInstance(executionSettings)
+                        .runExperiments();
             }
         }
     }

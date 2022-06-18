@@ -1,11 +1,11 @@
 package org.ehr.stats;
 
-import org.ehr.channel.Station;
+import org.ehr.channel.IStation;
 
 import java.util.List;
 
 public interface ISimulationsStatRecorder {
-    ISimulationStats getSimulationStats();
-    void recordQueueSize(int round, List<Station> stations);
+    void recordStationsState(int round, List<IStation> stations);
+
     void recordAwakeStations(int round, boolean[] roundListeningStations);
 }

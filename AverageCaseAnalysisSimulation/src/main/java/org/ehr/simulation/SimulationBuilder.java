@@ -1,7 +1,9 @@
 package org.ehr.simulation;
 
-import org.ehr.channel.MinimalStatChannel;
-import org.ehr.channel.MinimalStatChannelBuilder;
+import org.ehr.channel.Channel;
+import org.ehr.channel.ChannelBuilder;
+import org.ehr.channel.StationType;
+import org.ehr.stats.ISimulationsStatRecorder;
 
 public class SimulationBuilder {
     private double rho;
@@ -10,6 +12,8 @@ public class SimulationBuilder {
     private int executionRounds;
     private String algorithmName;
     private String adversaryName;
+    private StationType stationType;
+    private ISimulationsStatRecorder statRecorder;
 
     public SimulationBuilder setExecutionRounds(int executionRounds) {
         this.executionRounds = executionRounds;
@@ -41,15 +45,25 @@ public class SimulationBuilder {
         return this;
     }
 
+    public SimulationBuilder setupStatRecorder(ISimulationsStatRecorder statRecorder) {
+        this.statRecorder = statRecorder;
+        return this;
+    }
+
+    public SimulationBuilder setupStationType(StationType stationType) {
+        this.stationType = stationType;
+        return this;
+    }
+
     public Simulation createMinimalStatSimulation() {
-        MinimalStatChannel minimalStatChannel = new MinimalStatChannelBuilder()
+        Channel channel = new ChannelBuilder()
                 .setSystemSize(systemSize)
-                .setExecutionRounds(executionRounds)
                 .setStartingQueues(startingQueues)
-                .setupStations()
+                .setupStations(stationType)
                 .setupAdversary(adversaryName, rho)
                 .setupAlgorithm(algorithmName)
+                .setupStatRecorder(statRecorder)
                 .createMinimalStatSimulation();
-        return new Simulation(executionRounds, minimalStatChannel);
+        return new Simulation(executionRounds, channel);
     }
 }
