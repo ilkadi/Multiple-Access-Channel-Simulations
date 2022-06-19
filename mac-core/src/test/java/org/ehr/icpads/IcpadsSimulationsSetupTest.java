@@ -1,4 +1,4 @@
-package org.ehr.jcss;
+package org.ehr.icpads;
 
 import org.ehr.adversary.Adversary;
 import org.ehr.algorithm.Algorithm;
@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
  * Please note that this implementation is not the same as the one used above.
  * Hence, there are some variations in the results.
  */
-public class JCSSSimulationsSetupTest {
+public class IcpadsSimulationsSetupTest {
     private static final int DEFAULT_REPETITIONS = 128;
     private static final int ONE_MILLION = 1000000;
 
